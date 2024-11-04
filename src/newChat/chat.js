@@ -27,7 +27,7 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
   // console.log(allowedRecipients,"reciepent")
   useEffect(() => {
     if (token) {
-      const wsConnection = new WebSocket("ws://chat-ijqh.onrender.com");
+      const wsConnection = new WebSocket("wss://chat-ijqh.onrender.com");
       setWs(wsConnection);
 
       wsConnection.onopen = () => {
