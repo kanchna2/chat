@@ -27,7 +27,7 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
   // console.log(allowedRecipients,"reciepent")
   useEffect(() => {
     if (token) {
-      const wsConnection = new WebSocket("ws://localhost:5000");
+      const wsConnection = new WebSocket("ws://chat-ijqh.onrender.com");
       setWs(wsConnection);
 
       wsConnection.onopen = () => {
@@ -128,7 +128,7 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
 
   const login = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/login", { username, password });
+      const response = await axios.post("https://chat-ijqh.onrender.com/login", { username, password });
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
     } catch (error) {
