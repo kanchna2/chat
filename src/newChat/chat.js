@@ -12,6 +12,7 @@ const Chat = () => {
   const [tempRecipient, setTempRecipient] = useState(""); // Temporary state for input
   const [userStatus, setUserStatus] = useState({}); // Track recipient status and last online time
   const lastMessageRef = useRef(null);
+  const messageInputRef = useRef(null);
 
   useEffect(() => {
     if (Notification.permission !== "granted") {
@@ -99,6 +100,7 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
       };
       ws.send(JSON.stringify(messageData));
       setMessageInput("");
+      messageInputRef.current.focus()
     }
   };
 
@@ -123,6 +125,11 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
     if (ws && tempRecipient) {
       // Send `get-user-status` request using `tempRecipient` directly
       ws.send(JSON.stringify({ type: "get-user-status", recipient: tempRecipient }));
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
     }
   };
 
@@ -210,7 +217,8 @@ console.log(recipient)
 
           <div className="space-y-4 pb-20">
             {recipient && messages.map((msg, index) => (
-              <div className="flex gap-2.5" key={index}>
+              <div  className={`flex ${msg.sender === username ? "justify-end" : "justify-start"} gap-2.5`}
+              key={index}>
                 {msg.sender !== username && (
                   <img
                     src="https://pagedone.io/asset/uploads/1710412177.png"
@@ -224,7 +232,7 @@ console.log(recipient)
                   </h5>
                   <div
                     className={`px-3.5 py-2 rounded inline-flex ${
-                      msg.sender === username ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-900"
+                      msg.sender === username ? "bg-indigo-600 text-white text-right" : "bg-gray-100 text-gray-900"
                     }`}
                   >
                     <h5 className="text-sm font-normal leading-snug">{msg.content}</h5>
@@ -251,9 +259,11 @@ console.log(recipient)
             <div className="flex items-center gap-2 w-full">
               <input
                 type="text"
+                ref={messageInputRef}
                 placeholder="Type here..."
                 value={messageInput}
                 onChange={(e) => handleInputChange(e, setMessageInput)}
+                onKeyDown={handleKeyDown}
                 className="grow shrink basis-0 text-black text-xs font-medium leading-4 focus:outline-none"
               />
               <button
