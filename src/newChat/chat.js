@@ -13,7 +13,7 @@ const Chat = () => {
   const [userStatus, setUserStatus] = useState({}); // Track recipient status and last online time
   const lastMessageRef = useRef(null);
   const messageInputRef = useRef(null);
-
+const [loding,setLoding]=useState(false)
   useEffect(() => {
     if (Notification.permission !== "granted") {
       Notification.requestPermission();
@@ -23,7 +23,6 @@ const Chat = () => {
 const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
 ? process.env.REACT_APP_ALLOWED_RECIPIENTS.split(",")
 : [];
-
   // Establish WebSocket connection and handle messages
   // console.log(allowedRecipients,"reciepent")
   useEffect(() => {
@@ -135,9 +134,11 @@ const allowedRecipients = process.env.REACT_APP_ALLOWED_RECIPIENTS
 
   const login = async () => {
     try {
+      setLoding(true)
       const response = await axios.post("https://chat-ijqh.onrender.com/login", { username, password });
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
+      setLoding(false)
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -175,9 +176,10 @@ console.log(recipient)
           />
           <button
             onClick={login}
-            className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
+            disabled={loding}
+            className={`${loding ? 'disabled:opacity-50 cursor-not-allowed' : ''} w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 `}
           >
-            Login
+            {loding?"Loging...":"log in"}
           </button>
         </div>
       )}
